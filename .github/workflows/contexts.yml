@@ -1,0 +1,88 @@
+name: Context testing
+on:
+  issue_comment:
+    types: [created, deleted, edited]
+  issues:
+    types: [opened, edited, milestoned]
+  release:
+    types: [created, edited]
+  push: 
+  pull_request:
+  workflow_call:
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'     
+        required: true
+        default: 'warning'
+      tags:
+        description: 'Test scenario tags'  
+
+jobs:
+  write_contexts_to_log:
+    runs-on: ubuntu-latest
+    steps:
+      # - name: Write GitHub context to log
+      #   id: github_context_step
+      #   run: echo '${{ toJSON(github) }}'
+      - name: Write GitHub context to log
+        env:
+          GITHUB_CONTEXT: ${{ toJSON(github) }}
+        run: echo "$GITHUB_CONTEXT"
+      - name: Write job context to log
+        run: echo '${{ toJSON(job) }}'
+      - name: Write steps context to log
+        run: echo '${{ toJSON(steps) }}'
+      - name: Write runner context to log
+        run: echo '${{ toJSON(runner) }}'
+      - name: Write strategy context to log
+        run: echo '${{ toJSON(strategy) }}'
+      - name: Write matrix context to log
+        run: echo '${{ toJSON(matrix) }}'
+        
+      - name: issue author
+        run: echo "${{ github.event.issue.user.login }}"
+        
+      - name: echo release body
+        run: echo "${{ github.event.release.body }}"
+        
+      - name: echo issue comment body
+        run: echo "$comment_body"
+        env:
+          comment_body: ${{ github.event.comment.body }}
+
+      - name: echo issue comment body again
+        run: echo "${{ github.event.comment.body }}"
+        
+      - name: echo user
+        run: echo "${{ github.event.comment.user.login }}"
+        
+      - name: check if approved
+        if: false
+        run: | 
+          echo "looking to see if ${{ github.event.comment.user.login }} is in the approver team"
+          users=$(curl -sLX GET 'https://api.github.com/orgs/joshjohanning-org/teams/approver-team/members' \
+            --header "Accept: application/vnd.github.v3+json" \
+            --header "Authorization: Bearer ${{ secrets.GHEC_ADMIN_TOKEN }}" | jq -c '.[].login')
+          
+          echo $users | grep -q ${{ github.event.comment.user.login }} && echo "Found ${{ github.event.comment.user.login }} in users" || echo "::warning title=not_approved::user is not in the approver team"
+          
+  environment-job:
+    runs-on: ubuntu-latest
+    environment: dev
+    if: false
+    steps:
+      - name: Write GitHub context to log
+        id: github_context_step
+        run: echo '${{ toJSON(github) }}'
+      - name: Write job context to log
+        run: echo '${{ toJSON(job) }}'
+      - name: Write steps context to log
+        run: echo '${{ toJSON(steps) }}'
+      - name: Write runner context to log
+        run: echo '${{ toJSON(runner) }}'
+      - name: Write strategy context to log
+        run: echo '${{ toJSON(strategy) }}'
+      - name: Write matrix context to log
+        run: echo '${{ toJSON(matrix) }}'
+    
