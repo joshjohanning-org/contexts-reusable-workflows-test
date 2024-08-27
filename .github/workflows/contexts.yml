@@ -46,6 +46,10 @@ jobs:
         run: echo "$GITHUB_CONTEXT"
       - name: Write job context to log
         run: echo '${{ toJSON(job) }}'
+      - name: Write jobs context to log (reusable workflows)
+        env:
+          JOB_CONTEXT: ${{ toJSON(jobs) }}
+        run: echo "$JOBS_CONTEXT"
       - name: Write steps context to log
         run: echo '${{ toJSON(steps) }}'
       - name: Write runner context to log
