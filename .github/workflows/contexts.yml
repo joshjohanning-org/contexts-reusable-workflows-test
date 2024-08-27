@@ -40,8 +40,6 @@ jobs:
       # - name: Write GitHub context to log
       #   id: github_context_step
       #   run: echo '${{ toJSON(github) }}'
-      - name: Print all inputs
-        run: echo "Inputs: ${{ toJson(inputs) }}"
       - name: Write GitHub context to log
         env:
           GITHUB_CONTEXT: ${{ toJSON(github) }}
