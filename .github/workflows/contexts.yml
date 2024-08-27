@@ -9,6 +9,20 @@ on:
   push: 
   pull_request:
   workflow_call:
+    inputs:
+      logLevel:
+        description: 'Log level'     
+        required: true
+        default: 'warning'
+        type: string
+      tags:
+        description: 'Test scenario tags'
+        default: 'value'
+        type: string
+      color:
+        description: 'color'
+        default: 'blue'
+        type: string
   workflow_dispatch:
     inputs:
       logLevel:
